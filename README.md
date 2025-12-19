@@ -1,85 +1,85 @@
 # Listener Manager Pro
 
-Hafif bir yardımcı kütüphane: Duplicate (tekrarlanan) event listener'ları önler ve modal gibi dinamik UI elementlerini stabilize eder.
+A lightweight helper library that prevents duplicate event listeners and stabilizes dynamic UI elements like modals.
 
-## Özellikler
+## Features
 
-- ✅ **Duplicate Önleme**: Aynı event listener'ın aynı elemente birden fazla kez eklenmesini engeller
-- ✅ **Modal Stabilizasyonu**: Modal, map-container gibi dinamik elementlerde eski listener'ları otomatik temizler
-- ✅ **Prototip Yamalama**: `EventTarget.prototype.addEventListener` ve `removeEventListener` metodlarını güvenli şekilde yamalar
-- ✅ **SSR Uyumluluğu**: Server-side rendering ortamlarında güvenli çalışır
-- ✅ **Debug Modu**: Geliştirme sırasında detaylı log çıktısı sağlar
-- ✅ **WeakMap Kullanımı**: Memory leak'leri önlemek için WeakMap ile referans yönetimi
+- ✅ **Duplicate Prevention**: Prevents the same event listener from being added multiple times to the same element
+- ✅ **Modal Stabilization**: Automatically cleans up old listeners in dynamic elements like modals and map-containers
+- ✅ **Prototype Patching**: Safely patches `EventTarget.prototype.addEventListener` and `removeEventListener` methods
+- ✅ **SSR Compatibility**: Works safely in server-side rendering environments
+- ✅ **Debug Mode**: Provides detailed log output during development
+- ✅ **WeakMap Usage**: Reference management with WeakMap to prevent memory leaks
 
-## Kurulum
+## Installation
 
 ```bash
 yarn add listener-manager-pro
 ```
 
-## Kullanım
+## Usage
 
-### Temel Kullanım
+### Basic Usage
 
 ```javascript
 import EventListenerManager from 'listener-manager-pro';
 
-// Kütüphaneyi başlat (uygulamanın başlangıcında bir kez çağırın)
+// Initialize the library (call once at the start of your application)
 EventListenerManager.init({ debug: true });
 
-// Artık normal addEventListener kullanımı duplicate'leri otomatik engeller
+// Now normal addEventListener usage automatically prevents duplicates
 const button = document.querySelector('#myButton');
 
-button.addEventListener('click', handleClick); // ✅ İlk ekleme
-button.addEventListener('click', handleClick); // ⚠️ Engellenir (duplicate)
+button.addEventListener('click', handleClick); // ✅ First addition
+button.addEventListener('click', handleClick); // ⚠️ Blocked (duplicate)
 ```
 
-### Modal Senaryosu
+### Modal Scenario
 
-Modal açılıp kapanırken eski listener'lar otomatik temizlenir:
+Old listeners are automatically cleaned up when modals open and close:
 
 ```javascript
 EventListenerManager.init({ debug: true });
 
-// Modal içindeki bir butona listener ekle
+// Add a listener to a button inside a modal
 const modalButton = document.querySelector('.modal button');
 modalButton.addEventListener('click', handleModalClick);
 
-// Modal kapanıp tekrar açıldığında, eski listener temizlenir ve yeni eklenir
-// Bu sayede memory leak ve çoklu tetiklenme sorunları önlenir
+// When the modal closes and reopens, old listeners are cleaned up and new ones are added
+// This prevents memory leaks and multiple trigger issues
 ```
 
-### API Metodları
+### API Methods
 
 #### `init(config)`
-Kütüphaneyi başlatır ve prototipleri yamalar.
+Initializes the library and patches the prototypes.
 
 ```javascript
 EventListenerManager.init({
-  debug: true  // Debug modunu aktif eder (varsayılan: false)
+  debug: true  // Enables debug mode (default: false)
 });
 ```
 
 #### `destroy()`
-Prototipleri orijinal haline döndürür ve yamaları kaldırır.
+Restores prototypes to their original state and removes patches.
 
 ```javascript
 EventListenerManager.destroy();
 ```
 
 #### `check(element)`
-Belirli bir element üzerindeki kayıtlı listener'ları kontrol eder.
+Checks registered listeners on a specific element.
 
 ```javascript
 const button = document.querySelector('#myButton');
 button.addEventListener('click', handleClick);
 
 const listeners = EventListenerManager.check(button);
-console.log(listeners); // Kayıtlı listener'ları gösterir
+console.log(listeners); // Shows registered listeners
 ```
 
 #### `isSupported`
-Ortamın desteklenip desteklenmediğini kontrol eder (SSR ortamlarında `false` döner).
+Checks if the environment is supported (returns `false` in SSR environments).
 
 ```javascript
 if (EventListenerManager.isSupported) {
@@ -87,19 +87,19 @@ if (EventListenerManager.isSupported) {
 }
 ```
 
-## Nasıl Çalışır?
+## How It Works?
 
-1. **Prototip Yamalama**: `EventTarget.prototype.addEventListener` ve `removeEventListener` metodları yamalanır
-2. **Kayıt Sistemi**: Her element için WeakMap ile listener kayıtları tutulur
-3. **Duplicate Kontrolü**: Aynı event tipi, capture modu ve listener fonksiyonu kombinasyonu kontrol edilir
-4. **Otomatik Temizlik**: Modal gibi özel elementlerde (`closest('.modal')`) aynı event tipindeki eski listener'lar temizlenir
+1. **Prototype Patching**: `EventTarget.prototype.addEventListener` and `removeEventListener` methods are patched
+2. **Registry System**: Listener registrations are maintained for each element using WeakMap
+3. **Duplicate Check**: The combination of event type, capture mode, and listener function is checked
+4. **Automatic Cleanup**: Old listeners of the same event type are cleaned up in special elements like modals (`closest('.modal')`)
 
-## Örnek Senaryolar
+## Example Scenarios
 
-### React/Next.js ile Kullanım
+### Usage with React/Next.js
 
 ```javascript
-// _app.js veya app.js
+// _app.js or app.js
 import { useEffect } from 'react';
 import EventListenerManager from 'listener-manager-pro';
 
@@ -116,24 +116,24 @@ function MyApp({ Component, pageProps }) {
 }
 ```
 
-### Vanilla JavaScript ile Kullanım
+### Usage with Vanilla JavaScript
 
 ```javascript
-// Uygulama başlangıcında
+// At application startup
 EventListenerManager.init({ debug: true });
 
-// Artık tüm addEventListener çağrıları otomatik olarak korunur
+// Now all addEventListener calls are automatically protected
 document.getElementById('submitBtn').addEventListener('click', submitForm);
-document.getElementById('submitBtn').addEventListener('click', submitForm); // Engellenir
+document.getElementById('submitBtn').addEventListener('click', submitForm); // Blocked
 ```
 
-## Notlar
+## Notes
 
-- Kütüphane uygulamanın başlangıcında **bir kez** `init()` ile başlatılmalıdır
-- SSR (Server-Side Rendering) ortamlarında güvenli şekilde çalışır (otomatik olarak devre dışı kalır)
-- Debug modu production'da kapatılmalıdır (performans için)
-- WeakMap kullanımı sayesinde garbage collection normal şekilde çalışır
+- The library should be initialized **once** with `init()` at the start of your application
+- Works safely in SSR (Server-Side Rendering) environments (automatically disabled)
+- Debug mode should be turned off in production (for performance)
+- Thanks to WeakMap usage, garbage collection works normally
 
-## Lisans
+## License
 
 MIT

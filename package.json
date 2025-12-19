@@ -1,0 +1,23 @@
+{
+    "name": "listener-manager-pro",
+    "version": "1.0.0",
+    "description": "Prevent duplicate event listeners and manage modal events efficiently.",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "event listener",
+        "no duplicate events",
+        "modal events",
+        "ui listeners",
+        "safe event binding",
+        "patch eventtarget",
+        "frontend utility",
+        "modern js",
+        "auto clean listeners"
+    ],
+    "author": "Kaan G.",
+    "license": "MIT"
+}
