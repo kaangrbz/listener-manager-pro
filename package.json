@@ -1,6 +1,6 @@
 {
     "name": "listener-manager-pro",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Prevent duplicate event listeners and manage modal events efficiently.",
     "main": "index.js",
     "type": "module",
